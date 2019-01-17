@@ -13,6 +13,7 @@ class ActivityLog
     protected $resource_owner;
     protected $resource_type;
     protected $resource_id;
+    protected $resource;
     protected $meta;
 
     public function __construct()
@@ -34,6 +35,7 @@ class ActivityLog
         if ($resource instanceof Model) {
             $this->resource_type = $resource->getMorphClass();
             $this->resource_id = $resource->getKey();
+            $this->resource = $resource;
         }
         if (is_string($resource))
             $this->resource_type = $resource;
@@ -42,6 +44,14 @@ class ActivityLog
     public function addMeta(array $meta = [])
     {
         $this->meta = array_merge($this->meta, $meta);
+    }
+
+    public function includeChanges()
+    {
+        if ($this->resource)
+            $this->meta = array_merge($this->meta, [
+                'changes' => $this->resource->getChanges(),
+            ]);
     }
 
     public function log(string $description = null)
@@ -62,7 +72,7 @@ class ActivityLog
 
     protected function buildDescription()
     {
-        $description = ''; //User [name] created/updated/deleted [model] with id [id].
+        $description = ''; //User [name] modified [model] with id [id] on service [resource_owner].
 
         $this->description = $description;
     }
