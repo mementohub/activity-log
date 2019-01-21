@@ -52,18 +52,9 @@ class ActivityLog
         return $this;
     }
 
-    public function includeChanges()
-    {
-        if ($this->resource)
-            $this->meta = array_merge($this->meta, [
-                'changes' => $this->resource->getChanges(),
-            ]);
-
-        return $this;
-    }
-
     public function log(string $description = null)
     {
+        $this->includeChanges();
         $this->buildDescription();
 
         $data = [
@@ -83,6 +74,16 @@ class ActivityLog
         //todo generate a default message
         //$description = "User [name] modified [model] with id [id] on service [resource_owner].";
         //$this->description = $description;
+
+        return $this;
+    }
+
+    protected function includeChanges()
+    {
+        if ($this->resource)
+            $this->meta = array_merge($this->meta, [
+                'changes' => $this->resource->getChanges(),
+            ]);
 
         return $this;
     }
