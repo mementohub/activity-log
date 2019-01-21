@@ -38,12 +38,5 @@
         "sort-packages": true
     },
     "minimum-stability": "dev",
-    "prefer-stable": true,
-    "extra": {
-        "laravel": {
-            "providers": [
-                "iMemento\\ActivityLog\\ActivityServiceProvider"
-            ]
-        }
-    }
+    "prefer-stable": true
 }
