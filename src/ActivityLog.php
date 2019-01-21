@@ -73,7 +73,9 @@ class ActivityLog
     {
         //todo generate a default message
         //$description = "User [name] modified [model] with id [id] on service [resource_owner].";
-        //$this->description = $description;
+
+        $description = "Activity logged.";
+        $this->description = $description;
 
         return $this;
     }
