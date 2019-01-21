@@ -72,9 +72,9 @@ class ActivityLog
 
     protected function buildDescription()
     {
-        $description = ''; //User [name] modified [model] with id [id] on service [resource_owner].
-
-        $this->description = $description;
+        //todo generate a default message
+        //$description = "User [name] modified [model] with id [id] on service [resource_owner].";
+        //$this->description = $description;
     }
 
 }
