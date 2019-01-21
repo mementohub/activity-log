@@ -9,5 +9,7 @@ composer require imemento/activity-log
 
 ## Use
 ```php
-activity()->log();
+activity()
+->setResource($post) //optional
+->log("$post->name was updated.");
 ```
