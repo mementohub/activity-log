@@ -28,6 +28,8 @@ class ActivityLog
     public function setUser(Authenticatable $user)
     {
         $this->user = $user;
+
+        return $this;
     }
 
     public function setResource($resource)
@@ -39,11 +41,15 @@ class ActivityLog
         }
         if (is_string($resource))
             $this->resource_type = $resource;
+
+        return $this;
     }
 
     public function addMeta(array $meta = [])
     {
         $this->meta = array_merge($this->meta, $meta);
+
+        return $this;
     }
 
     public function includeChanges()
@@ -52,6 +58,8 @@ class ActivityLog
             $this->meta = array_merge($this->meta, [
                 'changes' => $this->resource->getChanges(),
             ]);
+
+        return $this;
     }
 
     public function log(string $description = null)
@@ -75,6 +83,8 @@ class ActivityLog
         //todo generate a default message
         //$description = "User [name] modified [model] with id [id] on service [resource_owner].";
         //$this->description = $description;
+
+        return $this;
     }
 
 }
