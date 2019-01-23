@@ -10,8 +10,10 @@ trait ActivityLogged
 {
     protected $enableLogging = true;
 
-    protected static function bootActivityLogs()
+    protected static function boot()
     {
+        parent::boot();
+
         static::eventsToBeRecorded()->each(function ($eventName) {
             return static::$eventName(function (Model $model) use ($eventName) {
 
@@ -37,9 +39,10 @@ trait ActivityLogged
             'updated',
             'deleted',
         ]);
-        if (collect(class_uses_recursive(static::class))->contains(SoftDeletes::class)) {
+
+        if (collect(class_uses_recursive(static::class))->contains(SoftDeletes::class))
             $events->push('restored');
-        }
+
         return $events;
     }
 
@@ -48,7 +51,7 @@ trait ActivityLogged
         if (! $this->enableLogging)
             return false;
 
-        if (in_array('deleted_at', $this->getDirty())) {
+        if (array_has($this->getDirty(), 'deleted_at')) {
             if ($this->getDirty()['deleted_at'] === null) {
                 return false;
             }
