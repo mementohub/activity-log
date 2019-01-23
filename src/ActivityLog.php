@@ -14,7 +14,9 @@ class ActivityLog
     protected $resource_type;
     protected $resource_id;
     protected $resource;
+    protected $event;
     protected $meta;
+    protected $include_changes;
 
     public function __construct()
     {
@@ -23,11 +25,20 @@ class ActivityLog
         $this->meta = [
             'url' => url()->full(),
         ];
+
+        $this->includeChanges();
     }
 
     public function setUser(Authenticatable $user)
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function setEvent(string $event)
+    {
+        $this->event = $event;
 
         return $this;
     }
@@ -54,7 +65,7 @@ class ActivityLog
 
     public function log(string $description = null)
     {
-        $this->includeChanges();
+        $this->addChanges();
         $this->buildDescription();
 
         $data = [
@@ -63,6 +74,7 @@ class ActivityLog
             'resource_owner' => $this->resource_owner,
             'resource_type' => $this->resource_type,
             'resource_id' => $this->resource_id,
+            'event' => $this->event,
             'meta' => $this->meta,
         ];
 
@@ -71,21 +83,36 @@ class ActivityLog
 
     protected function buildDescription()
     {
-        //todo generate a default message
-        //$description = "User [name] modified [model] with id [id] on service [resource_owner].";
+        $user_text = empty($this->user->id) ? "" : "by user with id {$this->user->id}";
 
-        $description = "Activity logged.";
+        $description = "$this->resource_type with id $this->resource_id on service $this->resource_owner was $this->event $user_text";
+
+        //$description = "Activity logged.";
         $this->description = $description;
 
         return $this;
     }
 
-    protected function includeChanges()
+    protected function addChanges()
     {
-        if ($this->resource)
+        if ($this->resource && $this->include_changes)
             $this->meta = array_merge($this->meta, [
                 'changes' => $this->resource->getChanges(),
             ]);
+
+        return $this;
+    }
+
+    public function includeChanges()
+    {
+        $this->include_changes = true;
+
+        return $this;
+    }
+
+    protected function excludeChanges()
+    {
+        $this->include_changes = false;
 
         return $this;
     }
