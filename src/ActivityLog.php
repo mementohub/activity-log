@@ -84,11 +84,13 @@ class ActivityLog
     protected function buildDescription()
     {
         $user_text = empty($this->user->id) ? "" : "by user with id {$this->user->id}";
+        $event_text = $this->event ? $this->event : "touched";
 
-        $description = "$this->resource_type with id $this->resource_id on service $this->resource_owner was $this->event $user_text";
-
-        //$description = "Activity logged.";
-        $this->description = $description;
+        if (isset($this->resource)) {
+            $this->description = "$this->resource_type with id $this->resource_id on service $this->resource_owner was $event_text $user_text";
+        } else {
+            $this->description = "Activity logged";
+        }
 
         return $this;
     }
