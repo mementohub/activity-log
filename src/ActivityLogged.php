@@ -10,10 +10,8 @@ trait ActivityLogged
 {
     protected $enableLogging = true;
 
-    protected static function boot()
+    protected static function bootActivityLogged()
     {
-        parent::boot();
-
         static::eventsToBeRecorded()->each(function ($eventName) {
             return static::$eventName(function (Model $model) use ($eventName) {
 
