@@ -112,7 +112,7 @@ class ActivityLog
         return $this;
     }
 
-    protected function excludeChanges()
+    public function excludeChanges()
     {
         $this->include_changes = false;
 
