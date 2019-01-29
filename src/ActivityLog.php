@@ -95,11 +95,25 @@ class ActivityLog
         return $this;
     }
 
+    /*
+     * Adds the modified data and makes sure to decode the json fields for proper storage...
+     * */
     protected function addChanges()
     {
-        if ($this->resource && $this->include_changes)
+        $casts = collect($this->resource->getCasts())->filter(function($value) {
+            return $value === 'array';
+        })->keys();
+
+        $changes = $this->resource->getChanges();
+
+        foreach ($changes as $k => $v) {
+            if ($casts->contains($k))
+                $changes[$k] = json_decode($v, true);
+        }
+
+        if ($this->resource && $this->include_changes && ! empty($changes))
             $this->meta = array_merge($this->meta, [
-                'changes' => $this->resource->getChanges(),
+                'changes' => $changes,
             ]);
 
         return $this;
