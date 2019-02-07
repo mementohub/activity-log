@@ -100,6 +100,9 @@ class ActivityLog
      * */
     protected function addChanges()
     {
+        if (! $this->resource)
+            return $this;
+
         $casts = collect($this->resource->getCasts())->filter(function($value) {
             return $value === 'array';
         })->keys();
@@ -111,7 +114,7 @@ class ActivityLog
                 $changes[$k] = json_decode($v, true);
         }
 
-        if ($this->resource && $this->include_changes && ! empty($changes))
+        if ($this->include_changes && ! empty($changes))
             $this->meta = array_merge($this->meta, [
                 'changes' => $changes,
             ]);
