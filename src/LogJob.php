@@ -23,11 +23,26 @@ class LogJob implements ShouldQueue
 
     public function handle(RequestService $request_service)
     {
-        $url = env('ENDPOINT_INTERNAL_SERVICES_ACTIVITY_LOG') . '/api/logs';
+        $url = $this->getEndpoint('/api/logs');
 
-        $response = $request_service->post($url, $this->data/*, $this->jwt*/);
+        try {
+            $response = $request_service->post($url, $this->data/*, $this->jwt*/);
+        } catch (\Exception $e) {
+            logger()->error('Error while logging an activity.');
+            return false;
+        }
 
         if($response->getStatusCode() !== 200)
             return false;
+    }
+
+    public function getEndpoint(string $path)
+    {
+        $host = env('ENDPOINT_INTERNAL_SERVICES_ACTIVITY_LOG');
+
+        if (! $host)
+            throw new \Exception('Activity log service endpoint is missing.');
+
+        return $host . $path;
     }
 }
