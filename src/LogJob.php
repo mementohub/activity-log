@@ -28,7 +28,7 @@ class LogJob implements ShouldQueue
         try {
             $response = $request_service->post($url, $this->data/*, $this->jwt*/);
         } catch (\Exception $e) {
-            logger()->error('Error while logging an activity.');
+            logger()->error('Error while logging an activity: ' . \GuzzleHttp\json_encode($this->data));
             return false;
         }
 
