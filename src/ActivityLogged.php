@@ -5,6 +5,7 @@ namespace iMemento\ActivityLog;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Arr;
 
 trait ActivityLogged
 {
@@ -49,7 +50,7 @@ trait ActivityLogged
         if (! $this->enableLogging)
             return false;
 
-        if (array_has($this->getDirty(), 'deleted_at')) {
+        if (Arr::has($this->getDirty(), 'deleted_at')) {
             if ($this->getDirty()['deleted_at'] === null) {
                 return false;
             }
