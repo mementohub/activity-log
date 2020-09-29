@@ -1,0 +1,49 @@
+name: Testing
+
+on: [push, pull_request]
+
+jobs:
+    tests:
+        runs-on: ubuntu-latest
+
+        strategy:
+            fail-fast: true
+            matrix:
+                php: [7.1, 7.2, 7.3, 7.4]
+                laravel: [5.8.*]
+                dependency-version: [prefer-lowest, prefer-stable]
+                include:
+                    -   laravel: 5.8.*
+                        testbench: 3.8.*
+
+        name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }} - ${{ matrix.dependency-version }}
+
+        steps:
+            -   name: Checkout code
+                uses: actions/checkout@v2
+
+            -   name: Cache dependencies
+                uses: actions/cache@v2
+                with:
+                    path: ~/.composer/cache/files
+                    key: dependencies-laravel-${{ matrix.laravel }}-php-${{ matrix.php }}-composer-${{ hashFiles('composer.json') }}
+
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: ${{ matrix.php }}
+                    extensions: curl, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, iconv
+                    coverage: none
+
+            -   name: Install dependencies
+                run: |
+                    composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
+                    composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction --no-suggest --no-progress
+
+            -   name: Show relevant dependencies
+                run: |
+                    php --version
+                    composer show | grep -e "laravel/framework \|guzzlehttp/guzzle \|phpunit/phpunit \|orchestra/testbench "
+                    
+            -   name: Execute tests
+                run: vendor/bin/phpunit
