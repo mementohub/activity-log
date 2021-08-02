@@ -2,6 +2,7 @@
 
 namespace iMemento\ActivityLog;
 
+use GuzzleHttp\Utils;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -28,7 +29,7 @@ class LogJob implements ShouldQueue
         try {
             $response = $request_service->post($url, $this->data/*, $this->jwt*/);
         } catch (\Exception $e) {
-            logger()->error('Error while logging an activity: ' . \GuzzleHttp\json_encode($this->data));
+            logger()->error('Error while logging an activity: ' . $e->getMessage() . "\n" . Utils::jsonEncode($this->data));
             return false;
         }
 
